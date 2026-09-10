@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+
+expenses.csv
+expenses_backup.csv
