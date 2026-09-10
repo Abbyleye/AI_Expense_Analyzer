@@ -1,7 +1,16 @@
-import matplotlib.pyplot as plt
 import csv
 import pandas as pd
+from datetime import datetime
 from training_data import predict_category
+from analysis import analyze_expenses
+from dashboard import show_dashboard
+from search import search_expenses
+from budget import analyze_budget
+from charts import (
+    spending_by_category,
+    monthly_spending_trend,
+    spending_distribution
+)
 
 print("-----------------")
 print("AI Expense Analyzer")
@@ -27,92 +36,131 @@ expenses = []
 
 while True:
 
-    expense_name = input("What did you spend on? ")
-    amount = float(input("How much is it? "))
+    while True:
+        expense_name = input("What did you spend on? ").strip()
+
+        if expense_name:
+            break
+
+        print("⚠️ Expense name cannot be empty.")
+
+    while True:
+        try:
+            amount = float(input("How much is it? "))
+
+            if amount <= 0:
+                print("⚠️ Amount must be greater than 0.")
+                continue
+
+            break
+
+        except ValueError:
+            print("⚠️ Please enter a valid number.")
 
     category = predict_category(expense_name)
-    print(f"🤖Suggested category: {category.title()}")
-    date = input("Enter date: ")
+    print(f"🤖 Suggested category: {category.title()}")
+
+    while True:
+        date = input("Enter date (DD/MM/YYYY): ")
+
+        try:
+            datetime.strptime(date, "%d/%m/%Y")
+            break
+
+        except ValueError:
+            print("⚠️ Invalid date. Please use DD/MM/YYYY.")
 
     expense = {
-        "Item": expense_name,
-        "Amount": amount,
-        "Category": category,
-        "Date": date
-    }
+    "Name": name,
+    "Item": expense_name,
+    "Amount": amount,
+    "Category": category,
+    "Date": date
+}
 
     expenses.append(expense)
 
-    another = input("Add another expense? yes/no: ")
+    while True:
+        another = input(
+            "Add another expense? yes/no: "
+        ).strip().lower()
 
-    if another.lower() == "no":
+        if another == "yes":
+            break
+        elif another == "no":
+            break
+        else:
+            print("⚠️ Please enter yes or no.")
+
+    if another == "no":
         break
 
 # save expenses to csv
-with open("expenses.csv", "w", newline = "") as file:
+with open("expenses.csv", "a", newline="") as file:
     writer = csv.DictWriter(
         file,
-        fieldnames = ["Item", "Amount", "Category", "Date"]
+        fieldnames=["Name", "Item", "Amount", "Category", "Date"]
     )
-    writer.writeheader()
+
+    if file.tell() == 0:
+        writer.writeheader()
+
     writer.writerows(expenses)
 
 # read using pandas
 df = pd.read_csv("expenses.csv")
-print("\n------DATA ANALYSIS-----")
-print(df)
 
-print(f"\n------Pandas Analysis------")
-print(f"Total spending: ₦{df['Amount'].sum():,.2f}")
-print(f"Average spending: ₦{df['Amount'].mean():,.2f}")
-print(f"Highest spending: ₦{df['Amount'].max():,.2f}")
-print(f"Number of expenses: {len(df)}")
-
-category_summary = df.groupby("Category")["Amount"].sum()
-print("\n-----Category Analysis-----")
-print(category_summary)
-
-# Your analysis starts here
-total = 0
-for expense in expenses:
-    total = total + expense["Amount"]
-
-categories = {}
-for expense in expenses:
-    category = expense["Category"]
-    amount = expense["Amount"]
-
-    if category in categories:
-        categories[category] = categories[category] + amount
-    else:
-        categories[category] = amount
-print("\n--Spending by Category--")
-for category, amount in categories.items():
-    print(f"{category.title()}: ₦{amount:,.2f}")
-
-highest_expense = max(expenses, key=lambda expense: expense["Amount"])
-average_expense = total / len(expenses)
-
-print("\n---Spending Insights---")
-print(f"Highest Expense: {highest_expense['Item']} - ₦{highest_expense['Amount']:,.2f}")
-print(f"Average Expense: ₦{average_expense:,.2f}")
-
-print("\n---------- Expense Summary---------")
-print(f"Total Expenses: ₦{total:,.2f}")
-
-# create spreading chart
-plt.bar(category_summary.index, category_summary.values)
-plt.title("Spending by Category")
-plt.xlabel("Category")
-plt.ylabel("Amount (₦)")
-plt.show()
-
-# create piechart
-plt.figure()
-plt.pie(
-    category_summary.values,
-    labels = category_summary.index,
-    autopct="%.1f%%"
+df["Date"] = pd.to_datetime(
+    df["Date"],
+    dayfirst=True
 )
-plt.title("Spending Distribution by Category")
-plt.show()
+
+# Filter expenses for current user
+user_df = df[
+    df["Name"].str.lower() == name.lower()
+].copy()
+
+print("\n------DATA ANALYSIS-----")
+print(user_df)
+
+# Analyze user's expenses
+(
+    total,
+    average_expense,
+    highest_expense,
+    category_summary,
+    monthly_summary,
+    highest_month,
+    highest_category,
+    highest_category_amount,
+    highest_category_percentage
+) = analyze_expenses(user_df)
+
+# Financial Dashboard
+
+show_dashboard(
+    name,
+    user_df,
+    total,
+    average_expense,
+    highest_expense,
+    highest_category,
+    highest_month,
+    highest_category_percentage,
+    category_summary
+)
+
+# Expense Search
+
+search_expenses(user_df)
+
+# Monthly Budget Analysis
+analyze_budget(monthly_summary)
+    
+# Spending Charts
+
+spending_by_category(category_summary)
+
+monthly_spending_trend(monthly_summary)
+
+spending_distribution(category_summary)
