@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use("TkAgg")
+
 import matplotlib.pyplot as plt
 
 
@@ -13,8 +16,6 @@ def spending_by_category(category_summary):
     plt.xlabel("Category")
     plt.ylabel("Amount (₦)")
 
-    plt.show()
-
 
 def monthly_spending_trend(monthly_summary):
     plt.figure()
@@ -28,12 +29,8 @@ def monthly_spending_trend(monthly_summary):
     plt.title("Monthly Spending Trend")
     plt.xlabel("Month")
     plt.ylabel("Amount (₦)")
-
     plt.xticks(rotation=45)
-
     plt.tight_layout()
-
-    plt.show()
 
 
 def spending_distribution(category_summary):
@@ -46,5 +43,14 @@ def spending_distribution(category_summary):
     )
 
     plt.title("Spending Distribution by Category")
+
+
+def show_all_charts(category_summary, monthly_summary):
+
+    spending_by_category(category_summary)
+
+    monthly_spending_trend(monthly_summary)
+
+    spending_distribution(category_summary)
 
     plt.show()

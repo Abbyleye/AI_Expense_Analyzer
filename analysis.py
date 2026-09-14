@@ -39,7 +39,7 @@ def analyze_expenses(user_df):
             f"₦{amount:,.2f}"
         )
 
-    # Monthly Spending
+       # Monthly Spending
     user_df["Month"] = user_df["Date"].dt.to_period("M")
 
     monthly_summary = user_df.groupby(
@@ -63,6 +63,59 @@ def analyze_expenses(user_df):
         f"{highest_month.strftime('%B %Y')} "
         f"— ₦{highest_month_amount:,.2f}"
     )
+
+    # Monthly Spending Trend
+    if len(monthly_summary) >= 2:
+
+        current_month = monthly_summary.index[-1]
+        previous_recorded_month = monthly_summary.index[-2]
+
+        current_amount = monthly_summary.iloc[-1]
+        previous_amount = monthly_summary.iloc[-2]
+
+        # Check whether the previous recorded month
+        # is actually the calendar month before
+        expected_previous_month = current_month - 1
+
+        print("\n--- Spending Trend ---")
+
+        if previous_recorded_month != expected_previous_month:
+
+            print(
+                f"ℹ️ There are missing months between "
+                f"{previous_recorded_month.strftime('%B %Y')} "
+                f"and "
+                f"{current_month.strftime('%B %Y')}."
+            )
+
+            print(
+                f"Comparing the latest recorded months: "
+                f"{previous_recorded_month.strftime('%B %Y')} "
+                f"→ "
+                f"{current_month.strftime('%B %Y')}"
+            )
+
+        monthly_change = (
+            (current_amount - previous_amount)
+            / previous_amount
+        ) * 100
+
+        if monthly_change > 0:
+            print(
+                f"📈 Spending increased by "
+                f"{monthly_change:.1f}%."
+            )
+
+        elif monthly_change < 0:
+            print(
+                f"📉 Spending decreased by "
+                f"{abs(monthly_change):.1f}%."
+            )
+
+        else:
+            print(
+                "➡️ Spending stayed the same."
+            )
 
     # Spending by Category
     print("\n--Spending by Category--")
@@ -97,6 +150,26 @@ def analyze_expenses(user_df):
         f"₦{average_expense:,.2f}"
     )
 
+    # Unusually High Expense
+    if highest_expense["Amount"] > average_expense * 2:
+        print(
+            f"⚠️ Unusually high expense detected: "
+            f"{highest_expense['Item']} - "
+            f"₦{highest_expense['Amount']:,.2f}"
+        )
+
+    # Largest Expense Percentage
+    highest_expense_percentage = (
+        highest_expense["Amount"] / total
+    ) * 100
+
+    print(
+        f"💡 Your largest expense accounts for "
+        f"{highest_expense_percentage:.1f}% "
+        f"of your total spending."
+    )
+
+    # Biggest Spending Category
     print(
         f"\n💡 Biggest Spending Category: "
         f"{highest_category.title()}"
@@ -108,7 +181,83 @@ def analyze_expenses(user_df):
         f"which is {highest_category_percentage:.1f}% "
         f"of your total spending."
     )
+        # Spending Concentration Insight
+    if highest_category_percentage >= 70:
+        print(
+            f"⚠️ Your spending is heavily concentrated "
+            f"in {highest_category.title()}."
+        )
 
+        print(
+            f"💡 Consider reviewing your "
+            f"{highest_category.lower()} expenses "
+            f"to see where you can reduce unnecessary spending."
+        )
+
+    elif highest_category_percentage >= 50:
+        print(
+            f"⚠️ A large portion of your spending "
+            f"goes to {highest_category.title()}."
+        )
+
+        print(
+            f"💡 Keep monitoring your "
+            f"{highest_category.lower()} expenses."
+        )
+
+    else:
+        print(
+            "✅ Your spending is not heavily "
+            "concentrated in one category."
+        )
+
+            # Spending Frequency Insight
+    category_frequency = user_df["Category"].value_counts()
+
+    most_frequent_category = category_frequency.idxmax()
+    most_frequent_count = category_frequency.max()
+
+    print("\n--- Spending Frequency ---")
+
+    print(
+        f"🍽️ {most_frequent_category.title()} was your "
+        f"most frequent spending category with "
+        f"{most_frequent_count} transactions."
+    )
+        # Spending Pattern Insight
+    total_transactions = len(user_df)
+
+    most_frequent_percentage = (
+        most_frequent_count / total_transactions
+    ) * 100
+
+    print("\n--- Spending Pattern ---")
+
+    if (
+        most_frequent_category == highest_category
+        and highest_category_percentage >= 50
+    ):
+        print(
+            f"⚠️ {highest_category.title()} is both your "
+            f"highest spending and most frequent category."
+        )
+
+        print(
+            f"💡 {highest_category.title()} accounts for "
+            f"{highest_category_percentage:.1f}% of your spending "
+            f"and {most_frequent_percentage:.1f}% of your transactions."
+        )
+
+    elif highest_category_percentage >= 50:
+        print(
+            f"⚠️ {highest_category.title()} is your main "
+            f"spending category."
+        )
+
+    else:
+        print(
+            "✅ No single category dominates your spending."
+        )
     # AI Recommendation
     print("\n--- AI Recommendation ---")
 

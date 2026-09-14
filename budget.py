@@ -75,19 +75,52 @@ def analyze_budget(monthly_summary):
         f"Budget Used: {budget_used:.1f}%"
     )
 
+        # Financial Health Risk Level
+    print("\n--- Financial Health ---")
+
     if budget_used > 100:
+        print("🔴 Financial Health: Over Budget")
+
         print(
             f"⚠️ You have exceeded your budget by "
             f"₦{abs(remaining_budget):,.2f}."
         )
 
+        print(
+            "💡 Consider reducing non-essential "
+            "expenses for this month."
+        )
+
     elif budget_used >= 80:
+        print("🟠 Financial Health: High Risk")
+
         print(
             "⚠️ You have used 80% or more "
             "of your monthly budget."
         )
 
-    else:
         print(
-            "✅ You are within your monthly budget."
+            "💡 Be careful with additional spending "
+            "for the rest of the month."
+        )
+
+    elif budget_used >= 70:
+        print("🟡 Financial Health: Moderate Risk")
+
+        print(
+            "⚠️ You have used 70% or more "
+            "of your monthly budget."
+        )
+
+        print(
+            "💡 Monitor your spending to avoid "
+            "approaching your budget limit."
+        )
+
+    else:
+        print("🟢 Financial Health: Healthy")
+
+        print(
+            "✅ Your spending is currently "
+            "within a comfortable range."
         )
