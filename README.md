@@ -429,8 +429,21 @@ approaching your budget limit.
 
 > The example values above are included to demonstrate the application's output format. The application calculates these values dynamically from the user's recorded expenses.
 
-## Project Structure
+## Technical Highlights
 
+This project demonstrates practical application of Python, data analysis, and machine learning concepts:
+
+* Built an **ML-based expense categorization system** using TF-IDF and Logistic Regression.
+* Used **Pandas** for financial data analysis, aggregation, and spending summaries.
+* Implemented **input validation and error handling** for expense entries, amounts, dates, and user responses.
+* Developed **spending-pattern analysis** to identify dominant categories, frequent spending areas, unusual expenses, and spending trends.
+* Implemented **budget analysis** with financial health indicators such as Healthy, Moderate Risk, High Risk, and Over Budget.
+* Created **data visualizations** with Matplotlib for category distribution and monthly spending trends.
+* Designed a **modular Python application** with separate components for analysis, dashboard, budget, search, charts, and machine learning.
+* Used **CSV-based data storage** for local expense records.
+* Applied **Git and GitHub** for version control, project documentation, and portfolio development.
+
+## Project Structure
 ```text
 AI-Expense-Analyzer/
 │
