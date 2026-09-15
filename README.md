@@ -335,20 +335,45 @@ The application stores user expenses locally in `expenses.csv`.
 
 For portfolio demonstrations, the repository also includes a fictional dataset named `demo_expenses.csv`.
 
-## Example Output
+## Project Demo
 
-### AI Expense Categorization
+The application analyzes a user's recorded expenses and produces a financial dashboard with spending summaries, category analysis, spending patterns, and recommendations.
+
+### Sample Dashboard Output
 
 ```text
-Enter expense name: rice
-Enter amount: ₦4000
+========== FINANCIAL DASHBOARD ==========
+👤 User: Ruth
 
-🤖 AI Suggested Category: Food
+💰 Total Spending: ₦22,800.00
+📈 Average Expense: ₦1,085.71
+🏆 Highest Expense: shirt - ₦5,000.00
+🧾 Number of Expenses: 21
 
-Accept this category? (yes/no): yes
+📂 Top Category: Food
+📅 Top Spending Month: February 2026
 
-✅ Expense saved successfully!
+💡 Spending Insight:
+Food accounts for 61.4% of total spending.
+
+📊 Spending Distribution
+Clothing     ████ 21.9%
+Food         ████████████ 61.4%
+Transport    ███ 16.7%
+=========================================
 ```
+
+### Detected Spending Patterns
+
+For this sample dataset, the analyzer identified:
+
+* **Food** as the largest spending category — ₦14,000 (61.4%).
+* **Food** as the most frequent category — 16 transactions.
+* **February 2026** as the highest-spending month — ₦14,800.
+* A **₦5,000 clothing expense** as an unusually high individual expense.
+* A recommendation to monitor food spending and consider setting a category budget.
+
+The application combines **machine-learning-based expense categorization** with rule-based financial analysis to turn raw expense records into actionable spending insights.
 
 ### Financial Analysis
 
